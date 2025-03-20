@@ -5,28 +5,56 @@ import '../services/auth_service.dart';
 import 'product_form_screen.dart';
 import 'login_screen.dart';
 
-class ProductScreen extends StatelessWidget {
+class ProductScreen extends StatefulWidget {
+  @override
+  _ProductScreenState createState() => _ProductScreenState();
+}
+
+class _ProductScreenState extends State<ProductScreen> {
   final ProductService _productService = ProductService();
   final AuthService _authService = AuthService();
+  String _searchQuery = ""; // Biến để lưu từ khóa tìm kiếm
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Danh sách sản phẩm"),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.logout, color: Colors.red),
-        //     onPressed: () async {
-        //       await _authService.signOut();
-        //       Navigator.pushReplacement(
-        //         context,
-        //         MaterialPageRoute(builder: (context) => LoginScreen()),
-        //       );
-        //     },
-        //   ),
-        // ],
+appBar: PreferredSize(
+  preferredSize: Size.fromHeight(60),
+  child: AppBar(
+    backgroundColor: Colors.blue, // Giữ màu AppBar rõ ràng
+    title: Container(
+      height: 45,
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.white, // Nền trắng để làm nổi bật
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blueAccent, width: 1), // Viền xanh
       ),
+      child: Row(
+        children: [
+          Icon(Icons.search, color: Colors.blueAccent), // Biểu tượng kính lúp
+          SizedBox(width: 5), // Khoảng cách giữa icon và TextField
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: "Tìm kiếm sản phẩm...",
+                hintStyle: TextStyle(color: Colors.grey, fontSize: 16), // Chữ gợi ý rõ ràng hơn
+                border: InputBorder.none,
+              ),
+              style: TextStyle(color: Colors.black, fontSize: 18), // Chữ rõ hơn
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.toLowerCase();
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+),
+
       body: StreamBuilder<List<Product>>(
         stream: _productService.getProducts(),
         builder: (context, snapshot) {
@@ -36,11 +64,17 @@ class ProductScreen extends StatelessWidget {
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text("Không có sản phẩm nào!"));
           }
-          final products = snapshot.data!;
+
+          // Lọc danh sách sản phẩm theo từ khóa tìm kiếm
+          final filteredProducts = snapshot.data!
+              .where((product) =>
+                  product.tenSanPham.toLowerCase().contains(_searchQuery))
+              .toList();
+
           return ListView.builder(
-            itemCount: products.length,
+            itemCount: filteredProducts.length,
             itemBuilder: (context, index) {
-              final product = products[index];
+              final product = filteredProducts[index];
               return Card(
                 elevation: 4,
                 margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -100,7 +134,7 @@ class ProductScreen extends StatelessWidget {
         children: [
           FloatingActionButton(
             heroTag: "btn_logout",
-            backgroundColor: Colors.red,
+            backgroundColor: const Color.fromARGB(255, 36, 184, 41),
             child: Icon(Icons.logout),
             onPressed: () async {
               await _authService.signOut();
@@ -110,7 +144,7 @@ class ProductScreen extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 10), // Khoảng cách giữa hai nút
+          SizedBox(height: 10),
           FloatingActionButton(
             heroTag: "btn_add",
             child: Icon(Icons.add),
