@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "296331548072",
+    "project_id": "baitapgiuaki-ecbe0",
+    "storage_bucket": "baitapgiuaki-ecbe0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296331548072:android:c6fcc1fb704116e007b99d",
+        "android_client_info": {
+          "package_name": "com.example.baitapgiuaky"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8tzAgL_EHsTp8L6sr6XcAs9fOjQpMnQI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
